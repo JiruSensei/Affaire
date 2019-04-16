@@ -12,6 +12,7 @@
 		E21C11AD225DB59900F4D503 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E21C11AB225DB59900F4D503 /* Main.storyboard */; };
 		E21C11AF225DB59B00F4D503 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E21C11AE225DB59B00F4D503 /* Assets.xcassets */; };
 		E21C11B2225DB59B00F4D503 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E21C11B0225DB59B00F4D503 /* LaunchScreen.storyboard */; };
+		E21C11BB22659D6200F4D503 /* AffaireItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21C11BA22659D6200F4D503 /* AffaireItem.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +23,7 @@
 		E21C11AE225DB59B00F4D503 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E21C11B1225DB59B00F4D503 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E21C11B3225DB59B00F4D503 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E21C11BA22659D6200F4D503 /* AffaireItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffaireItem.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +56,7 @@
 		E21C11A6225DB59900F4D503 /* Affaire */ = {
 			isa = PBXGroup;
 			children = (
+				E21C11B922659D2F00F4D503 /* Model */,
 				E21C11A7225DB59900F4D503 /* AppDelegate.swift */,
 				E21C11A9225DB59900F4D503 /* AffaireViewController.swift */,
 				E21C11AB225DB59900F4D503 /* Main.storyboard */,
@@ -62,6 +65,14 @@
 				E21C11B3225DB59B00F4D503 /* Info.plist */,
 			);
 			path = Affaire;
+			sourceTree = "<group>";
+		};
+		E21C11B922659D2F00F4D503 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				E21C11BA22659D6200F4D503 /* AffaireItem.swift */,
+			);
+			path = Model;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -135,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E21C11BB22659D6200F4D503 /* AffaireItem.swift in Sources */,
 				E21C11AA225DB59900F4D503 /* AffaireViewController.swift in Sources */,
 				E21C11A8225DB59900F4D503 /* AppDelegate.swift in Sources */,
 			);
