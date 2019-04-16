@@ -13,27 +13,36 @@ import UIKit
 // avoir à s'enregistrer comme delegate et datasource
 class AffaireViewController: UITableViewController {
 
-    var itemArray = ["Rdv radio", "Rdv Ruma", "Buy costume"]
+    var itemArray = [AffaireItem]()
     var defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
-        
+        itemArray.append(AffaireItem(with: "eat at lunch"))
+        itemArray.append(AffaireItem(with: "iOS"))
+        itemArray.append(AffaireItem(with: "DDD"))
+
         // On recharge le tableau d'Item à partir de UserFaults
-        itemArray = defaults.array(forKey: "AffaireArray") as! [String]
+        if let items = defaults.array(forKey: "AffaireArray") as? [AffaireItem] {
+            itemArray = items
+        }
     }
 
     //MARK: - Callback pour datasource
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // "" est l'identifier que l'on a donnée à la Property cell dans le storyBoard
+        
+        // "AffaireItemCell" est l'identifier que l'on a donnée à la Property cell dans le storyBoard
         // onglet "Properties" > identifier quand on clic sur
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "AffaireItemCell", for: indexPath)
         
         // On crée un tableau fictif pour le moment
-        cell.textLabel?.text = itemArray[indexPath.row]
+        let item = itemArray[indexPath.row]
+        cell.textLabel?.text = item.label
+        cell.accessoryType = item.checked ? .checkmark : .none
         
+        // et on retourne la cell
         return cell
 
     }
@@ -50,13 +59,10 @@ class AffaireViewController: UITableViewController {
         // Juste pour avoir un effet plus sympa 
         tableView.deselectRow(at: indexPath, animated: true)
         
-        let cell: UITableViewCell = tableView.cellForRow(at: indexPath)!
-        if cell.accessoryType == .checkmark {
-            cell.accessoryType = .none
-        }
-        else {
-            cell.accessoryType = .checkmark
-        }
+        // Il suffit d'inverser le booleen
+        itemArray[indexPath.row].checked = !itemArray[indexPath.row].checked
+        
+        tableView.reloadData()
     }
     
     //MARK - Add Items actions
@@ -73,13 +79,15 @@ class AffaireViewController: UITableViewController {
         
         // L'action que réalisera la Popup est une UIAlertAction
         let action = UIAlertAction(title: "Add your new à faire", style: .default) { (action) in
-            print(popupTextField.text)
-            self.itemArray.append(popupTextField.text!)
+            print("New Item is: \(popupTextField.text)")
+            self.itemArray.append(AffaireItem(with: popupTextField.text!))
             
             // On sauvegarde dans UserDefault
+            print("Try to sauvegarde")
             self.defaults.set(self.itemArray, forKey: "AffaireArray")
             
             // pour l'affiche prenne en compte le nouvel item.
+            print("reload")
             self.tableView.reloadData()
         }
         

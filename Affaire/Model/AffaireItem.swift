@@ -13,6 +13,7 @@ struct AffaireItem {
     var checked = false
     
     init(with label: String) {
+        print("with label \(label)")
         self.label = label
     }
 }
