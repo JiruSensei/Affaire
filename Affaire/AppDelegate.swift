@@ -16,10 +16,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        let defaultsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).last! as String
-        
-        print("PATH: \(defaultsPath)")
+
         return true
     }
 

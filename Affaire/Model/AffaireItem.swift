@@ -8,12 +8,11 @@
 
 import Foundation
 
-struct AffaireItem {
+struct AffaireItem: Codable {
     var label = ""
     var checked = false
     
     init(with label: String) {
-        print("with label \(label)")
         self.label = label
     }
 }

@@ -14,19 +14,23 @@ import UIKit
 class AffaireViewController: UITableViewController {
 
     var itemArray = [AffaireItem]()
-    var defaults = UserDefaults.standard
+    // Le chemin et fichier où l'on va sauvegarder
+    let dataFilePath = FileManager.default.urls(for: .documentDirectory,
+                                                in: .userDomainMask)
+                        .first?.appendingPathComponent("afaire.plist")
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        
+        print(dataFilePath)
         // Do any additional setup after loading the view.
-        itemArray.append(AffaireItem(with: "eat at lunch"))
-        itemArray.append(AffaireItem(with: "iOS"))
-        itemArray.append(AffaireItem(with: "DDD"))
-
+//        itemArray.append(AffaireItem(with: "eat at lunch"))
+//        itemArray.append(AffaireItem(with: "iOS"))
+//        itemArray.append(AffaireItem(with: "DDD"))
+        loadItems()
         // On recharge le tableau d'Item à partir de UserFaults
-        if let items = defaults.array(forKey: "AffaireArray") as? [AffaireItem] {
-            itemArray = items
-        }
+        loadItems()
     }
 
     //MARK: - Callback pour datasource
@@ -62,6 +66,9 @@ class AffaireViewController: UITableViewController {
         // Il suffit d'inverser le booleen
         itemArray[indexPath.row].checked = !itemArray[indexPath.row].checked
         
+        // Le array a changé, il faut donc le sauvegarder
+        saveItems()
+        
         tableView.reloadData()
     }
     
@@ -79,12 +86,10 @@ class AffaireViewController: UITableViewController {
         
         // L'action que réalisera la Popup est une UIAlertAction
         let action = UIAlertAction(title: "Add your new à faire", style: .default) { (action) in
-            print("New Item is: \(popupTextField.text)")
             self.itemArray.append(AffaireItem(with: popupTextField.text!))
             
             // On sauvegarde dans UserDefault
-            print("Try to sauvegarde")
-            self.defaults.set(self.itemArray, forKey: "AffaireArray")
+            self.saveItems()
             
             // pour l'affiche prenne en compte le nouvel item.
             print("reload")
@@ -107,6 +112,31 @@ class AffaireViewController: UITableViewController {
         // et on affiche le Popup avec present
         present(popUp, animated: true, completion: nil)
         
+    }
+    
+    //MARK: Sauvegarde des données
+    func saveItems() {
+        // En premier on crée un encoder spécifique pour les fichiers Property
+        let encoder = PropertyListEncoder()
+        do {
+            // On récupère une structure Data qui encapsule nos données
+            let data = try encoder.encode(itemArray)
+            // et on l'écrit dans le fichier que l'on à indiqué
+            try data.write(to: dataFilePath!)
+        } catch {
+            print (error)
+        }
+    }
+    
+    func loadItems() {
+        // On lit les données au format Data
+        guard let data = try? Data(contentsOf: dataFilePath!) else { return }
+        // On crée le decoder
+        let decoder = PropertyListDecoder()
+        // et on convertie dans notre Array
+        // le premier paramètre indique le type de notre array
+        // qui doit être conform au protocol Decodable
+        itemArray = try! decoder.decode([AffaireItem].self, from: data)
     }
 }
 
