@@ -7,30 +7,38 @@
 //
 
 import UIKit
+import CoreData
 
 // On hérite de UITableViewController ce qui évite de
 // avoir à déclarer une variable tableView
 // avoir à s'enregistrer comme delegate et datasource
 class AffaireViewController: UITableViewController {
-
-    var itemArray = [AffaireItem]()
-    // Le chemin et fichier où l'on va sauvegarder
-    let dataFilePath = FileManager.default.urls(for: .documentDirectory,
-                                                in: .userDomainMask)
-                        .first?.appendingPathComponent("afaire.plist")
     
+    // En premier on récupère le context (le stagging)
+    // et pour ce faire on récupère le singleton de l'Application
+    // Il sera utilisé pour sauver les données notamment
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    // Notre tableau d'Item contenu dans la liste
+    var itemArray = [AfaireItem]()
+    
+    // La catégorie de ce VC (celle qui sera sélectionnée)
+    var selectedCategory: Category? {
+        // On fait le load dans didSet ce qui permet de le retirer de viewDidLoad()
+        // Et on charge les donnée de la catégori spécifiée.s
+        didSet {
+            loadItems()
+        }
+    }
+    
+    //
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
-        print(dataFilePath)
-        // Do any additional setup after loading the view.
-//        itemArray.append(AffaireItem(with: "eat at lunch"))
-//        itemArray.append(AffaireItem(with: "iOS"))
-//        itemArray.append(AffaireItem(with: "DDD"))
-        loadItems()
-        // On recharge le tableau d'Item à partir de UserFaults
-        loadItems()
+        // Il peut être intéressant d'imprimer le chemin afin d'aller expoler
+        // avec l'appli datum
+//        print (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
+
     }
 
     //MARK: - Callback pour datasource
@@ -43,8 +51,8 @@ class AffaireViewController: UITableViewController {
         
         // On crée un tableau fictif pour le moment
         let item = itemArray[indexPath.row]
-        cell.textLabel?.text = item.label
-        cell.accessoryType = item.checked ? .checkmark : .none
+        cell.textLabel?.text = item.title
+        cell.accessoryType = item.done ? .checkmark : .none
         
         // et on retourne la cell
         return cell
@@ -64,7 +72,10 @@ class AffaireViewController: UITableViewController {
         tableView.deselectRow(at: indexPath, animated: true)
         
         // Il suffit d'inverser le booleen
-        itemArray[indexPath.row].checked = !itemArray[indexPath.row].checked
+        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
+        
+//        context.delete(itemArray[indexPath.row])
+//        itemArray.remove(at: indexPath.row)
         
         // Le array a changé, il faut donc le sauvegarder
         saveItems()
@@ -86,7 +97,13 @@ class AffaireViewController: UITableViewController {
         
         // L'action que réalisera la Popup est une UIAlertAction
         let action = UIAlertAction(title: "Add your new à faire", style: .default) { (action) in
-            self.itemArray.append(AffaireItem(with: popupTextField.text!))
+            
+            // Maintenant avec CoreData il faut indiquer le context (membre de la class)
+            // quand on crée une entity
+            let newItem = AfaireItem(context: self.context)
+            newItem.title = popupTextField.text!
+            newItem.parentCategory = self.selectedCategory!
+            self.itemArray.append(newItem)
             
             // On sauvegarde dans UserDefault
             self.saveItems()
@@ -115,28 +132,78 @@ class AffaireViewController: UITableViewController {
     }
     
     //MARK: Sauvegarde des données
+    
+    // Il suffit d'appelé save() sur le context qui est un attribut
+    // de notre controller
     func saveItems() {
-        // En premier on crée un encoder spécifique pour les fichiers Property
-        let encoder = PropertyListEncoder()
         do {
-            // On récupère une structure Data qui encapsule nos données
-            let data = try encoder.encode(itemArray)
-            // et on l'écrit dans le fichier que l'on à indiqué
-            try data.write(to: dataFilePath!)
+            try context.save()
         } catch {
             print (error)
         }
     }
     
-    func loadItems() {
-        // On lit les données au format Data
-        guard let data = try? Data(contentsOf: dataFilePath!) else { return }
-        // On crée le decoder
-        let decoder = PropertyListDecoder()
-        // et on convertie dans notre Array
-        // le premier paramètre indique le type de notre array
-        // qui doit être conform au protocol Decodable
-        itemArray = try! decoder.decode([AffaireItem].self, from: data)
+    // La méthode pour recharger les items à partir de la base.
+    // On met un prédicat afin de ne sélectionner que ceux de la catégorie.
+    func loadItems(with request: NSFetchRequest<AfaireItem> = AfaireItem.fetchRequest(), predicate: NSPredicate? = nil) {
+        // Le predicat se fait sur le nom de la catégorie
+        let categoryPredicat = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
+        
+        // Puis on ajoute le cas échéant le prédicat déjà présent (notamment pour Search)
+        if let additionalPredicate = predicate {
+            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicat, additionalPredicate])
+        }
+        else {
+            request.predicate = categoryPredicat
+        }
+        
+        request.predicate = compoundPredicate
+
+        do {
+            print("Try to fetch les affaire item")
+            itemArray = try context.fetch(request)
+        }
+        catch {
+            print("Error fetching AfaireItem \(error)")
+        }
+        
+        tableView.reloadData()
     }
 }
 
+//MARK: - SearchBar méthodes
+extension AffaireViewController: UISearchBarDelegate {
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        // On crée la requête pour l'entité AfaireItem.
+        let request: NSFetchRequest<AfaireItem> = AfaireItem.fetchRequest()
+        print(searchBar.text!)
+
+        // On crée un predicat qui en gros est le code de la requête
+        // dans un format proche de SQL
+        let predicat = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        
+        // On charge le prédicat dans la requête
+        request.predicate = predicat
+        
+        // On précise l'ordre dans lequel on veut recevoir le résultat
+        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
+        
+        // Attention, ce qui est attendu est un tableau de descriptor
+        // On l'initialise avec un seul élément
+        request.sortDescriptors = [sortDescriptor]
+        
+        // Finalement on exécute le requête
+        loadItems(with: request)
+        
+    }
+    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        if searchBar.text?.count == 0 {
+            loadItems()
+            DispatchQueue.main.async {
+               searchBar.resignFirstResponder()
+            }
+            
+        }
+    }
+}
