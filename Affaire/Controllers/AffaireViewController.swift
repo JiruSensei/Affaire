@@ -7,20 +7,18 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 // On hérite de UITableViewController ce qui évite de
 // avoir à déclarer une variable tableView
 // avoir à s'enregistrer comme delegate et datasource
 class AffaireViewController: UITableViewController {
-    
-    // En premier on récupère le context (le stagging)
-    // et pour ce faire on récupère le singleton de l'Application
-    // Il sera utilisé pour sauver les données notamment
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+
+    // récupère une instance de realm
+    let realm = try! Realm()
     
     // Notre tableau d'Item contenu dans la liste
-    var itemArray = [AfaireItem]()
+    var items: Results<AFaireItem>?
     
     // La catégorie de ce VC (celle qui sera sélectionnée)
     var selectedCategory: Category? {
@@ -46,41 +44,51 @@ class AffaireViewController: UITableViewController {
         
         // "AffaireItemCell" est l'identifier que l'on a donnée à la Property cell dans le storyBoard
         // onglet "Properties" > identifier quand on clic sur
-        
         let cell = tableView.dequeueReusableCell(withIdentifier: "AffaireItemCell", for: indexPath)
         
-        // On crée un tableau fictif pour le moment
-        let item = itemArray[indexPath.row]
-        cell.textLabel?.text = item.title
-        cell.accessoryType = item.done ? .checkmark : .none
-        
+        // On positionne les attributs de la cell sélectionnée
+        if let item = items?[indexPath.row] {
+            cell.textLabel?.text = item.title
+            cell.accessoryType = item.done ? .checkmark : .none
+        }
+        else { // au cas où
+            cell.textLabel?.text = "No item yet"
+        }
         // et on retourne la cell
         return cell
 
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return itemArray.count
+        let itemsCount = items?.count ?? 1
+        return itemsCount
     }
     
     //MARK: more callback
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("select row \(itemArray[indexPath.row])")
+        print("select row \(items?[indexPath.row])")
         
-        // Juste pour avoir un effet plus sympa 
-        tableView.deselectRow(at: indexPath, animated: true)
-        
-        // Il suffit d'inverser le booleen
-        itemArray[indexPath.row].done = !itemArray[indexPath.row].done
-        
-//        context.delete(itemArray[indexPath.row])
-//        itemArray.remove(at: indexPath.row)
-        
-        // Le array a changé, il faut donc le sauvegarder
-        saveItems()
+        // On met à jour l'item
+        // Ce qui est intéressant est qu'on récupère l'élément de la liste
+        // Il n'y a pas besoin de save explicite le fait de faure es changements
+        // dans le write() suffi
+        if let item = items?[indexPath.row] {
+            do {
+                try realm.write {
+                    item.done = !item.done
+                }
+            }
+            catch {
+                print("Update error \(error)")
+            }
+        }
         
         tableView.reloadData()
+        
+        // Juste pour avoir un effet plus sympa
+        tableView.deselectRow(at: indexPath, animated: true)
+        
     }
     
     //MARK - Add Items actions
@@ -98,18 +106,30 @@ class AffaireViewController: UITableViewController {
         // L'action que réalisera la Popup est une UIAlertAction
         let action = UIAlertAction(title: "Add your new à faire", style: .default) { (action) in
             
-            // Maintenant avec CoreData il faut indiquer le context (membre de la class)
-            // quand on crée une entity
-            let newItem = AfaireItem(context: self.context)
-            newItem.title = popupTextField.text!
-            newItem.parentCategory = self.selectedCategory!
-            self.itemArray.append(newItem)
-            
-            // On sauvegarde dans UserDefault
-            self.saveItems()
-            
+            // Maintenant avec Realm on ne gère plus le tableau d'Item
+            // on ajoute donc à celui pointé par la catégorie courrante
+            if let currentCategory = self.selectedCategory {
+
+                do {
+                    try self.realm.write {
+                        let newItem = AFaireItem()
+                        newItem.title = popupTextField.text!
+                        newItem.dateCreated = Date()
+                        // on ajoute le newItem dans la liste des items de la catégorie
+                        // Attention, ça doit être fait dans une transaction write()
+                        print("on ajoute l'item maintenant \(newItem)")
+                        currentCategory.items.append(newItem)
+                        self.realm.add(newItem)
+                        print("on sauvegarde")
+                    }
+                }
+                catch {
+                    print("Error while saving new item \(error)")
+                }
+                
+            }
+
             // pour l'affiche prenne en compte le nouvel item.
-            print("reload")
             self.tableView.reloadData()
         }
         
@@ -135,37 +155,22 @@ class AffaireViewController: UITableViewController {
     
     // Il suffit d'appelé save() sur le context qui est un attribut
     // de notre controller
-    func saveItems() {
+    func save(item: AFaireItem) {
         do {
-            try context.save()
+            try realm.write {
+                realm.add(item)
+            }
         } catch {
             print (error)
         }
     }
     
     // La méthode pour recharger les items à partir de la base.
-    // On met un prédicat afin de ne sélectionner que ceux de la catégorie.
-    func loadItems(with request: NSFetchRequest<AfaireItem> = AfaireItem.fetchRequest(), predicate: NSPredicate? = nil) {
-        // Le predicat se fait sur le nom de la catégorie
-        let categoryPredicat = NSPredicate(format: "parentCategory.name MATCHES %@", selectedCategory!.name!)
-        
-        // Puis on ajoute le cas échéant le prédicat déjà présent (notamment pour Search)
-        if let additionalPredicate = predicate {
-            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicat, additionalPredicate])
-        }
-        else {
-            request.predicate = categoryPredicat
-        }
-        
-        request.predicate = compoundPredicate
-
-        do {
-            print("Try to fetch les affaire item")
-            itemArray = try context.fetch(request)
-        }
-        catch {
-            print("Error fetching AfaireItem \(error)")
-        }
+    func loadItems() {
+        // Pour le moment recharge l'ensemble des AFaireItem
+        print("Category is \(selectedCategory?.name)")
+//        items = realm.objects(AFaireItem.self)
+        items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         
         tableView.reloadData()
     }
@@ -174,26 +179,11 @@ class AffaireViewController: UITableViewController {
 //MARK: - SearchBar méthodes
 extension AffaireViewController: UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        // On crée la requête pour l'entité AfaireItem.
-        let request: NSFetchRequest<AfaireItem> = AfaireItem.fetchRequest()
-        print(searchBar.text!)
-
-        // On crée un predicat qui en gros est le code de la requête
-        // dans un format proche de SQL
-        let predicat = NSPredicate(format: "title CONTAINS[cd] %@", searchBar.text!)
+        print("Filter la liste maintenant avec \(searchBar.text!)")
+        items = items?.filter("title CONTAINS[cd] %@", searchBar.text!)
+            .sorted(byKeyPath: "dateCreated", ascending: true)
         
-        // On charge le prédicat dans la requête
-        request.predicate = predicat
-        
-        // On précise l'ordre dans lequel on veut recevoir le résultat
-        let sortDescriptor = NSSortDescriptor(key: "title", ascending: true)
-        
-        // Attention, ce qui est attendu est un tableau de descriptor
-        // On l'initialise avec un seul élément
-        request.sortDescriptors = [sortDescriptor]
-        
-        // Finalement on exécute le requête
-        loadItems(with: request)
+        tableView.reloadData()
         
     }
     

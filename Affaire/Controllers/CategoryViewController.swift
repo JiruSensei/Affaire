@@ -7,14 +7,15 @@
 //
 
 import UIKit
-import CoreData
+import RealmSwift
 
 class CategoryViewController: UITableViewController {
-    // On récupère déjà la context pour pouvoir sauvegarder en DB
-    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
+    // Initialisation de Realm
+    let realm = try! Realm()
     
     // L'Array dans lequel se trouve toutes les Category
-    var categoryArray = [Category]()
+    var categories: Results<Category>?
 
 
     override func viewDidLoad() {
@@ -37,12 +38,15 @@ class CategoryViewController: UITableViewController {
             
             // Maintenant avec CoreData il faut indiquer le context (membre de la class)
             // quand on crée une entity
-            let newCategory = Category(context: self.context)
+            let newCategory = Category()
             newCategory.name = popupTextField.text!
-            self.categoryArray.append(newCategory)
+            
+            // Ce n'est plus nécessaire car notre "tableau" categories est directement lié
+            // La mise à jour est automatique quand on sauve une nouvelle instance.
+//            self.categories.append(newCategory)
             
             // On sauvegarde dans UserDefault
-            self.saveCategories()
+            self.save(category: newCategory)
             
             // pour l'affiche prenne en compte le nouvel item.
             self.tableView.reloadData()
@@ -76,9 +80,8 @@ class CategoryViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
         
         // On crée un tableau fictif pour le moment
-        let category = categoryArray[indexPath.row]
-        cell.textLabel?.text = category.name
-//        cell.accessoryType = item.done ? .checkmark : .none
+        let category = categories?[indexPath.row]
+        cell.textLabel?.text = category?.name ?? "No category added yet"
         
         // et on retourne la cell
         return cell
@@ -87,7 +90,7 @@ class CategoryViewController: UITableViewController {
     
     // Retourne le nombre d'élément Category actuel
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categoryArray.count
+        return categories?.count ?? 1
     }
     
     
@@ -110,16 +113,18 @@ class CategoryViewController: UITableViewController {
         // Dans notre cas on pourrait se passer du if let car on sait qu'une row a été sélectionnée
         // mais comme c'est un Optional c'est plus propre de faire comme celà
         if let indexPath = tableView.indexPathForSelectedRow {
-            destinationVC.selectedCategory = categoryArray[indexPath.row]
+            destinationVC.selectedCategory = categories?[indexPath.row]
         }
     }
     
     //MARK: - Data manipulation
     
     // Pour sauvegarder les catégories
-    func saveCategories() {
+    func save(category: Category) {
         do {
-            try context.save()
+            try realm.write {
+                realm.add(category)
+            }
         } catch {
             print (error)
         }
@@ -127,14 +132,10 @@ class CategoryViewController: UITableViewController {
     
     // Pour recharger dans le context les catégories
     // On fait également un rafraichissement de l'écran
-    func loadCategories(with request: NSFetchRequest<Category> = Category.fetchRequest()) {
+    func loadCategories() {
         
-        do {
-            categoryArray = try context.fetch(request)
-        }
-        catch {
-            print("Error fetching Categories \(error)")
-        }
+        // Attention la méthode retourne un Result<Element>
+        categories = realm.objects(Category.self)
         
         tableView.reloadData()
     }

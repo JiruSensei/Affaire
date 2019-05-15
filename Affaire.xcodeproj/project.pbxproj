@@ -3,21 +3,25 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9543F31679434FA8D1423D31 /* Pods_Affaire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = ADDE404AA4591943C80BF0AE /* Pods_Affaire.framework */; };
 		E21C11A8225DB59900F4D503 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21C11A7225DB59900F4D503 /* AppDelegate.swift */; };
 		E21C11AA225DB59900F4D503 /* AffaireViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21C11A9225DB59900F4D503 /* AffaireViewController.swift */; };
 		E21C11AD225DB59900F4D503 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E21C11AB225DB59900F4D503 /* Main.storyboard */; };
 		E21C11AF225DB59B00F4D503 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E21C11AE225DB59B00F4D503 /* Assets.xcassets */; };
 		E21C11B2225DB59B00F4D503 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E21C11B0225DB59B00F4D503 /* LaunchScreen.storyboard */; };
-		E21C11BB22659D6200F4D503 /* AffaireItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E21C11BA22659D6200F4D503 /* AffaireItem.swift */; };
-		E226835722685A7D0012493B /* DomainModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = E226835522685A7D0012493B /* DomainModel.xcdatamodeld */; };
 		E226835B227198540012493B /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E226835A227198540012493B /* CategoryViewController.swift */; };
+		E226835F22784A6A0012493B /* AFaireItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E226835E22784A6A0012493B /* AFaireItem.swift */; };
+		E226836122784B380012493B /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = E226836022784B380012493B /* Category.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		14755AAA0A1C65AEDD5BE951 /* Pods-Affaire.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Affaire.debug.xcconfig"; path = "Target Support Files/Pods-Affaire/Pods-Affaire.debug.xcconfig"; sourceTree = "<group>"; };
+		ADDE404AA4591943C80BF0AE /* Pods_Affaire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Affaire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CDA96300FAB15CECD1A79B2C /* Pods-Affaire.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Affaire.release.xcconfig"; path = "Target Support Files/Pods-Affaire/Pods-Affaire.release.xcconfig"; sourceTree = "<group>"; };
 		E21C11A4225DB59900F4D503 /* Affaire.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Affaire.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E21C11A7225DB59900F4D503 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E21C11A9225DB59900F4D503 /* AffaireViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffaireViewController.swift; sourceTree = "<group>"; };
@@ -25,9 +29,9 @@
 		E21C11AE225DB59B00F4D503 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E21C11B1225DB59B00F4D503 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E21C11B3225DB59B00F4D503 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E21C11BA22659D6200F4D503 /* AffaireItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AffaireItem.swift; sourceTree = "<group>"; };
-		E226835622685A7D0012493B /* DomainModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = DomainModel.xcdatamodel; sourceTree = "<group>"; };
 		E226835A227198540012493B /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
+		E226835E22784A6A0012493B /* AFaireItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AFaireItem.swift; sourceTree = "<group>"; };
+		E226836022784B380012493B /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -35,17 +39,37 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9543F31679434FA8D1423D31 /* Pods_Affaire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		60AFB2087FE7297A63BDFA56 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				14755AAA0A1C65AEDD5BE951 /* Pods-Affaire.debug.xcconfig */,
+				CDA96300FAB15CECD1A79B2C /* Pods-Affaire.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		91CA941A41B7F4BC6C0BC332 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				ADDE404AA4591943C80BF0AE /* Pods_Affaire.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		E21C119B225DB59900F4D503 = {
 			isa = PBXGroup;
 			children = (
 				E21C11A6225DB59900F4D503 /* Affaire */,
 				E21C11A5225DB59900F4D503 /* Products */,
+				60AFB2087FE7297A63BDFA56 /* Pods */,
+				91CA941A41B7F4BC6C0BC332 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,8 +97,8 @@
 		E21C11B922659D2F00F4D503 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				E21C11BA22659D6200F4D503 /* AffaireItem.swift */,
-				E226835522685A7D0012493B /* DomainModel.xcdatamodeld */,
+				E226836022784B380012493B /* Category.swift */,
+				E226835E22784A6A0012493B /* AFaireItem.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -112,9 +136,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = E21C11B6225DB59B00F4D503 /* Build configuration list for PBXNativeTarget "Affaire" */;
 			buildPhases = (
+				22AAEA27B9E422CF47849EE4 /* [CP] Check Pods Manifest.lock */,
 				E21C11A0225DB59900F4D503 /* Sources */,
 				E21C11A1225DB59900F4D503 /* Frameworks */,
 				E21C11A2225DB59900F4D503 /* Resources */,
+				7689612D69EB18EA1A787CEA /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -171,16 +197,58 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		22AAEA27B9E422CF47849EE4 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Affaire-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7689612D69EB18EA1A787CEA /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Affaire/Pods-Affaire-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Affaire/Pods-Affaire-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Affaire/Pods-Affaire-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		E21C11A0225DB59900F4D503 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				E226835B227198540012493B /* CategoryViewController.swift in Sources */,
-				E21C11BB22659D6200F4D503 /* AffaireItem.swift in Sources */,
-				E226835722685A7D0012493B /* DomainModel.xcdatamodeld in Sources */,
+				E226835F22784A6A0012493B /* AFaireItem.swift in Sources */,
 				E21C11AA225DB59900F4D503 /* AffaireViewController.swift in Sources */,
 				E21C11A8225DB59900F4D503 /* AppDelegate.swift in Sources */,
+				E226836122784B380012493B /* Category.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +392,7 @@
 		};
 		E21C11B7225DB59B00F4D503 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 14755AAA0A1C65AEDD5BE951 /* Pods-Affaire.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -342,6 +411,7 @@
 		};
 		E21C11B8225DB59B00F4D503 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = CDA96300FAB15CECD1A79B2C /* Pods-Affaire.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -380,19 +450,6 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
-
-/* Begin XCVersionGroup section */
-		E226835522685A7D0012493B /* DomainModel.xcdatamodeld */ = {
-			isa = XCVersionGroup;
-			children = (
-				E226835622685A7D0012493B /* DomainModel.xcdatamodel */,
-			);
-			currentVersion = E226835622685A7D0012493B /* DomainModel.xcdatamodel */;
-			path = DomainModel.xcdatamodeld;
-			sourceTree = "<group>";
-			versionGroupType = wrapper.xcdatamodel;
-		};
-/* End XCVersionGroup section */
 	};
 	rootObject = E21C119C225DB59900F4D503 /* Project object */;
 }
