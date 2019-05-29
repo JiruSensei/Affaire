@@ -12,7 +12,7 @@ import RealmSwift
 // On hérite de UITableViewController ce qui évite de
 // avoir à déclarer une variable tableView
 // avoir à s'enregistrer comme delegate et datasource
-class AffaireViewController: UITableViewController {
+class AffaireViewController: SwipeTableViewController {
 
     // récupère une instance de realm
     let realm = try! Realm()
@@ -42,9 +42,8 @@ class AffaireViewController: UITableViewController {
     //MARK: - Callback pour datasource
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        // "AffaireItemCell" est l'identifier que l'on a donnée à la Property cell dans le storyBoard
-        // onglet "Properties" > identifier quand on clic sur
-        let cell = tableView.dequeueReusableCell(withIdentifier: "AffaireItemCell", for: indexPath)
+        // On appel la méthode de la classe mère et récupère ainsi la cell
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         // On positionne les attributs de la cell sélectionnée
         if let item = items?[indexPath.row] {
@@ -67,7 +66,7 @@ class AffaireViewController: UITableViewController {
     //MARK: more callback
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("select row \(items?[indexPath.row])")
+        print("select row \(String(describing: items?[indexPath.row]))")
         
         // On met à jour l'item
         // Ce qui est intéressant est qu'on récupère l'élément de la liste
@@ -151,6 +150,20 @@ class AffaireViewController: UITableViewController {
         
     }
     
+    //MARK: - Swipe Delete
+    override func updateModel(at indexPath: IndexPath) {
+        
+        if let afaireToDelete = self.items?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(afaireToDelete)
+                }
+            } catch {
+                print("Error while deleting afaire item at \(indexPath.row) error is \(error)")
+            }
+        }
+    }
+    
     //MARK: Sauvegarde des données
     
     // Il suffit d'appelé save() sur le context qui est un attribut
@@ -168,7 +181,7 @@ class AffaireViewController: UITableViewController {
     // La méthode pour recharger les items à partir de la base.
     func loadItems() {
         // Pour le moment recharge l'ensemble des AFaireItem
-        print("Category is \(selectedCategory?.name)")
+        print("Parent Category is \(selectedCategory?.name ?? "unknown")")
 //        items = realm.objects(AFaireItem.self)
         items = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
         

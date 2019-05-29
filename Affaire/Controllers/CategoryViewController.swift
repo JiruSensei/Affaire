@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
-class CategoryViewController: UITableViewController {
+class CategoryViewController: SwipeTableViewController {
     
     // Initialisation de Realm
     let realm = try! Realm()
@@ -21,9 +22,10 @@ class CategoryViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.separatorStyle = .none
+        
         // On recharge les Cateories
         loadCategories()
-
     }
 
     @IBAction func addButtonPressed(_ sender: UIBarButtonItem) {
@@ -40,12 +42,11 @@ class CategoryViewController: UITableViewController {
             // quand on crée une entity
             let newCategory = Category()
             newCategory.name = popupTextField.text!
+            // On récupère également une couleur  aléatoire en utilisant Chameleon
+            // et on sauvegarde sa valeur en hexa car Realm ne peut sauvegarder des
+            newCategory.backgroundColor = UIColor.randomFlat.hexValue()
             
-            // Ce n'est plus nécessaire car notre "tableau" categories est directement lié
-            // La mise à jour est automatique quand on sauve une nouvelle instance.
-//            self.categories.append(newCategory)
-            
-            // On sauvegarde dans UserDefault
+            // On sauvegarde
             self.save(category: newCategory)
             
             // pour l'affiche prenne en compte le nouvel item.
@@ -68,20 +69,20 @@ class CategoryViewController: UITableViewController {
         // et on affiche le Popup avec present
         present(popUp, animated: true, completion: nil)
     }
-    
-    //MARK: - TableView Datasource methods
-    
+        
     // Pour l'affichage, retourne une cell avec les informations renseignées pour un rang donnée
     // est utilisée par l'OS pour faire le display
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        // On appel la méthode de la classe mère et récupère ainsi la cell
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
-        // "AffaireItemCell" est l'identifier que l'on a donnée à la Property cell dans le storyBoard
-        // onglet "Properties" > identifier quand on clic sur
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
-        
-        // On crée un tableau fictif pour le moment
+        // Je pourrais me passer de cette constante intermédiaire
         let category = categories?[indexPath.row]
         cell.textLabel?.text = category?.name ?? "No category added yet"
+
+        // On change la coleur avec Chameleon en donnant une couleur aléatoire
+        cell.backgroundColor = UIColor(hexString: category?.backgroundColor ?? "AAA") //UIColor.randomFlat
+        cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
         
         // et on retourne la cell
         return cell
@@ -91,6 +92,20 @@ class CategoryViewController: UITableViewController {
     // Retourne le nombre d'élément Category actuel
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return categories?.count ?? 1
+    }
+    
+    //MARK: - Swipe Delete
+    override func updateModel(at indexPath: IndexPath) {
+        
+        if let categoryToDelete = self.categories?[indexPath.row] {
+            do {
+                try self.realm.write {
+                    self.realm.delete(categoryToDelete)
+                }
+            } catch {
+                print("Error while deleting row \(indexPath.row)")
+            }
+        }
     }
     
     
@@ -121,6 +136,7 @@ class CategoryViewController: UITableViewController {
     
     // Pour sauvegarder les catégories
     func save(category: Category) {
+        print("enter saveCategory")
         do {
             try realm.write {
                 realm.add(category)
@@ -128,15 +144,19 @@ class CategoryViewController: UITableViewController {
         } catch {
             print (error)
         }
+        print("outer saveCategory")
     }
     
     // Pour recharger dans le context les catégories
     // On fait également un rafraichissement de l'écran
     func loadCategories() {
-        
+        print("enter loadCategories")
         // Attention la méthode retourne un Result<Element>
         categories = realm.objects(Category.self)
         
         tableView.reloadData()
+        
+        print("outerr loadCategorty")
     }
 }
+

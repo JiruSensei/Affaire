@@ -13,6 +13,7 @@
 		E21C11AD225DB59900F4D503 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E21C11AB225DB59900F4D503 /* Main.storyboard */; };
 		E21C11AF225DB59B00F4D503 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E21C11AE225DB59B00F4D503 /* Assets.xcassets */; };
 		E21C11B2225DB59B00F4D503 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E21C11B0225DB59B00F4D503 /* LaunchScreen.storyboard */; };
+		E224FF9A2297E617004B8AF1 /* SwipeTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E224FF992297E617004B8AF1 /* SwipeTableViewController.swift */; };
 		E226835B227198540012493B /* CategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E226835A227198540012493B /* CategoryViewController.swift */; };
 		E226835F22784A6A0012493B /* AFaireItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = E226835E22784A6A0012493B /* AFaireItem.swift */; };
 		E226836122784B380012493B /* Category.swift in Sources */ = {isa = PBXBuildFile; fileRef = E226836022784B380012493B /* Category.swift */; };
@@ -29,6 +30,7 @@
 		E21C11AE225DB59B00F4D503 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E21C11B1225DB59B00F4D503 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E21C11B3225DB59B00F4D503 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E224FF992297E617004B8AF1 /* SwipeTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeTableViewController.swift; sourceTree = "<group>"; };
 		E226835A227198540012493B /* CategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryViewController.swift; sourceTree = "<group>"; };
 		E226835E22784A6A0012493B /* AFaireItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AFaireItem.swift; sourceTree = "<group>"; };
 		E226836022784B380012493B /* Category.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Category.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 			children = (
 				E21C11A9225DB59900F4D503 /* AffaireViewController.swift */,
 				E226835A227198540012493B /* CategoryViewController.swift */,
+				E224FF992297E617004B8AF1 /* SwipeTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -248,6 +251,7 @@
 				E226835F22784A6A0012493B /* AFaireItem.swift in Sources */,
 				E21C11AA225DB59900F4D503 /* AffaireViewController.swift in Sources */,
 				E21C11A8225DB59900F4D503 /* AppDelegate.swift in Sources */,
+				E224FF9A2297E617004B8AF1 /* SwipeTableViewController.swift in Sources */,
 				E226836122784B380012493B /* Category.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
