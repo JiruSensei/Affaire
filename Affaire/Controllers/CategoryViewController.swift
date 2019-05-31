@@ -77,13 +77,16 @@ class CategoryViewController: SwipeTableViewController {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         
         // Je pourrais me passer de cette constante intermédiaire
-        let category = categories?[indexPath.row]
-        cell.textLabel?.text = category?.name ?? "No category added yet"
+        if let category = categories?[indexPath.row] {
+            cell.textLabel?.text = category.name
 
-        // On change la coleur avec Chameleon en donnant une couleur aléatoire
-        cell.backgroundColor = UIColor(hexString: category?.backgroundColor ?? "AAA") //UIColor.randomFlat
-        cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
-        
+            // On change la coleur avec Chameleon en donnant une couleur aléatoire
+            cell.backgroundColor = UIColor(hexString: category.backgroundColor) //UIColor.randomFlat
+            cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
+        }
+        else {
+            cell.textLabel?.text = "No category added yet"
+        }
         // et on retourne la cell
         return cell
         

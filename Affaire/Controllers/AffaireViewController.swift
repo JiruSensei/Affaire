@@ -8,6 +8,7 @@
 
 import UIKit
 import RealmSwift
+import ChameleonFramework
 
 // On hérite de UITableViewController ce qui évite de
 // avoir à déclarer une variable tableView
@@ -29,6 +30,9 @@ class AffaireViewController: SwipeTableViewController {
         }
     }
     
+    // On récupère un outlet de la searchBar pour  piouvoir
+    // changer la couleur tint afinde l'adapter au reste
+    @IBOutlet weak var searchBar: UISearchBar!
     //
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,9 +40,34 @@ class AffaireViewController: SwipeTableViewController {
         // Il peut être intéressant d'imprimer le chemin afin d'aller expoler
         // avec l'appli datum
 //        print (FileManager.default.urls(for: .documentDirectory, in: .userDomainMask))
-
+        
+    }
+    
+    // CHALLENG --------------------_>>>>>>>>>>>>>>>>>>>>>>>
+    // factoriser ce code répétitif dans une méthode updateNavBar()
+    
+    override func viewWillAppear(_ animated: Bool) {
+        let coleur = UIColor(hexString: selectedCategory?.backgroundColor ?? "0123")
+        guard let navBar = navigationController?.navigationBar else {
+            fatalError("there is no navigation bar, sounds strange indeed")
+        }
+        navBar.barTintColor = coleur
+        navBar.tintColor =  ContrastColorOf(coleur!, returnFlat: true)
+        searchBar.barTintColor = coleur
+        
+        title = selectedCategory?.name ?? "Items"
     }
 
+    override func viewWillDisappear(_ animated: Bool) {
+        guard let originalColor = UIColor(hexString: "1D9BF6") else {
+            return
+        }
+        guard let navBar = navigationController?.navigationBar else {
+            fatalError("there is no navigation bar, sounds strange indeed")
+        }
+        navBar.barTintColor = originalColor
+        navBar.tintColor =  FlatWhite()
+    }
     //MARK: - Callback pour datasource
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
@@ -49,6 +78,9 @@ class AffaireViewController: SwipeTableViewController {
         if let item = items?[indexPath.row] {
             cell.textLabel?.text = item.title
             cell.accessoryType = item.done ? .checkmark : .none
+            cell.backgroundColor = UIColor(hexString: selectedCategory?.backgroundColor ?? "AAA")?.darken(byPercentage: CGFloat(indexPath.row)/CGFloat(items!.count))
+            cell.textLabel?.textColor = ContrastColorOf(cell.backgroundColor!, returnFlat: true)
+
         }
         else { // au cas où
             cell.textLabel?.text = "No item yet"
